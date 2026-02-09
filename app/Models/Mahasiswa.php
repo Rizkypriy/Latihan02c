@@ -25,4 +25,15 @@ class Mahasiswa extends Model
     
     // Nama primary key
     protected $primaryKey = 'nim';
+
+    public function matakuliahs()
+    {
+        return $this->belongsToMany(
+            MataKuliah::class,       // Model target
+            'mahasiswa_matakuliah',  // Nama tabel pivot
+            'nim',                   // Foreign key di pivot untuk Mahasiswa
+            'kode_mk'                // Foreign key di pivot untuk MataKuliah
+        );
+    }
 }
+

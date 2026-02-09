@@ -97,6 +97,29 @@
         </div>
         <!-- AKHIR DARI KODE TAMBAHAN -->
 
+        <div class="navigation-bar mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url('/') }}"><i class="bi bi-house-door"></i> Home</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <i class="bi bi-people"></i> Mahasiswa
+                        </li>
+                    </ol>
+                </nav>
+                <div class="btn-group">
+                    <a href="{{ route('matakuliah.index') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-book me-1"></i> Ke Mata Kuliah
+                    </a>
+                    <a href="{{ route('mahasiswa.create') }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Tambah Mahasiswa
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Header -->
         <div class="table-header">
             <h3 class="mb-0">
