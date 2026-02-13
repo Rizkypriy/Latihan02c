@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MataKuliah extends Model
 {
+    protected $table = 'matakuliahs';
     protected $primaryKey = 'kode_mk';
     public $incrementing = false;
     protected $keyType = 'string';

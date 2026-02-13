@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mahasiswa extends Model
 {
+    protected $table = 'mahasiswas';
     use HasFactory;
 
     // Kolom yang bisa diisi massal
