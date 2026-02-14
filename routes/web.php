@@ -11,3 +11,5 @@ Route::get('/', function () {
 // Tambahkan ini untuk CRUD lengkap mahasiswa
 Route::resource('mahasiswa', MahasiswaController::class);
 Route::resource('matakuliah', MataKuliahController::class);
+Route::get('/matakuliah/{matakuliah}/peserta', [MataKuliahController::class, 'peserta'])
+     ->name('matakuliah.peserta');

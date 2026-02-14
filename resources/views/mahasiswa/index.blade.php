@@ -142,7 +142,7 @@
                         <th width="15%">NIM</th>
                         <th width="25%">Nama</th>
                         <th width="15%">Kelas</th>
-                        <th width="25%">Mata Kuliah</th>
+                        <th width="25%"></th>
                         <th width="15%" class="text-center">Aksi</th>
                     </tr>
                 </thead>

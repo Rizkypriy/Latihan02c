@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\MataKuliah;
+use App\Models\Transkrip;
+use App\Models\Mahasiswa; 
 use Illuminate\Http\Request;
 
 class MataKuliahController extends Controller
@@ -12,10 +14,10 @@ class MataKuliahController extends Controller
      */
     public function index()
     {
-        // 1. Ambil semua data dari database
-        $matakuliahs = MataKuliah::all();
+        // Ambil semua data dengan jumlah peserta (transkrip)
+        $matakuliahs = MataKuliah::withCount('transkrips')->get();
     
-        // 2. Kirim data ke view
+        // Kirim data ke view
         return view('matakuliah.index', compact('matakuliahs'));
     }
 
@@ -24,8 +26,8 @@ class MataKuliahController extends Controller
      */
     public function create()
     {
-        // 1. Tampilkan form kosong
-        return view('matakuliah.create');
+      $matakuliahs = MataKuliah::all(); // Ambil semua mata kuliah
+    return view('mahasiswa.create', compact('matakuliahs'));
     }
 
     /**
@@ -33,70 +35,111 @@ class MataKuliahController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. VALIDASI input user
-        $validated = $request->validate([
-            'kode_mk' => 'required|unique:matakuliahs|max:10',
-            'nama_mk' => 'required|max:100',
-            'sks' => 'required|integer|min:1|max:6',
-            'semester' => 'required|integer|min:1|max:8'
-        ]);
-        
-        // 2. SIMPAN ke database
-        MataKuliah::create($validated);
-        
-        // 3. REDIRECT dengan pesan sukses
-        return redirect()->route('matakuliah.index')
-            ->with('success', 'Mata kuliah berhasil ditambahkan!');
-        }
+        // Validasi data
+    $validated = $request->validate([
+        'nim' => 'required|string|max:15|unique:mahasiswas,nim',
+        'nama' => 'required|string|max:100',
+        'kelas' => 'required|string|max:20',
+        // 'matakuliah' => 'required|string|max:50', // Bisa dihapus jika tidak digunakan
+        'kode_mk' => 'required|exists:matakuliahs,kode_mk',
+        'semester_ambil' => 'required|integer|min:1|max:14'
+    ]);
+
+    // Simpan data mahasiswa
+    $mahasiswa = Mahasiswa::create([
+        'nim' => $request->nim,
+        'nama' => $request->nama,
+        'kelas' => $request->kelas,
+        'matakuliah' => $request->matakuliah ?? '' // Opsional
+    ]);
+
+    // Simpan ke tabel transkrip
+    Transkrip::create([
+        'nim' => $request->nim,
+        'kode_mk' => $request->kode_mk,
+        'semester_ambil' => $request->semester_ambil,
+        'nilai' => null, // Nilai belum diisi
+        'grade' => null   // Grade belum diisi
+    ]);
+
+    return redirect()->route('mahasiswa.index')
+        ->with('success', 'Data mahasiswa berhasil ditambahkan!');
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(MataKuliah $matakuliah)
     {
-        // 1. Tampilkan detail satu record
+        // Load relasi peserta untuk ditampilkan di detail
+        $matakuliah->load(['transkrips.mahasiswa']);
+        
         return view('matakuliah.show', compact('matakuliah'));
+    }
+
+    /**
+     * TAMPILKAN DAFTAR PESERTA MATA KULIAH
+     */
+    public function peserta($kode_mk)
+    {
+        $matakuliah = MataKuliah::with(['transkrips.mahasiswa'])
+                                 ->where('kode_mk', $kode_mk)
+                                 ->firstOrFail();
+        
+        return view('matakuliah.peserta', compact('matakuliah'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MataKuliah $matakuliah)
-    {
-        // 1. Tampilkan form dengan data lama
-        return view('matakuliah.edit', compact('matakuliah'));
-    }
-
+    public function edit($nim)
+{
+    $mahasiswa = Mahasiswa::where('nim', $nim)->firstOrFail();
+    $matakuliahs = MataKuliah::all();
+    
+    // Ambil data transkrip mahasiswa ini
+    $transkrip = Transkrip::where('nim', $nim)->first();
+    
+    return view('mahasiswa.edit', compact('mahasiswa', 'matakuliahs', 'transkrip'));
+}
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MataKuliah $matakuliah)
-    {
-        // 1. VALIDASI (kecuali kode_mk yang unique)
-        $validated = $request->validate([
-            'kode_mk' => 'required|max:10|unique:matakuliahs,kode_mk,'.$matakuliah->kode_mk.',kode_mk',
-            'nama_mk' => 'required|max:100',
-            'sks' => 'required|integer|min:1|max:6',
-            'semester' => 'required|integer|min:1|max:8'
-        ]);
-        
-        // 2. UPDATE database
-        $matakuliah->update($validated);
-        
-        // 3. REDIRECT dengan pesan
-        return redirect()->route('matakuliah.index')
-            ->with('success', 'Data berhasil diperbarui!');
-    }
+    public function update(Request $request, $nim)
+{
+    $request->validate([
+        'nim' => 'required|string|max:15|unique:mahasiswas,nim,' . $nim . ',nim',
+        'nama' => 'required|string|max:100',
+        'kelas' => 'required|string|max:20',
+        'kode_mk' => 'required|exists:matakuliahs,kode_mk',
+        'semester_ambil' => 'required|integer|min:1|max:14'
+    ]);
 
+    $mahasiswa = Mahasiswa::where('nim', $nim)->firstOrFail();
+    $mahasiswa->update([
+        'nama' => $request->nama,
+        'kelas' => $request->kelas,
+    ]);
+
+    // Update atau buat transkrip
+    Transkrip::updateOrCreate(
+        ['nim' => $nim],
+        [
+            'kode_mk' => $request->kode_mk,
+            'semester_ambil' => $request->semester_ambil
+        ]
+    );
+
+    return redirect()->route('mahasiswa.index')
+        ->with('success', 'Data mahasiswa berhasil diperbarui!');
+}
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(MataKuliah $matakuliah)
     {
-         // 1. HAPUS dari database
         $matakuliah->delete();
         
-        // 2. REDIRECT dengan pesan
         return redirect()->route('matakuliah.index')
             ->with('success', 'Data berhasil dihapus!');
     }

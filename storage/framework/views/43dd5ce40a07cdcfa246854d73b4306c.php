@@ -270,4 +270,4 @@
         });
     </script>
 </body>
-</html><?php /**PATH C:\xampp\htdocs\Latihan02c\resources\views/mahasiswa/index.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\xampp\htdocs\Latihan03a\resources\views/mahasiswa/index.blade.php ENDPATH**/ ?>

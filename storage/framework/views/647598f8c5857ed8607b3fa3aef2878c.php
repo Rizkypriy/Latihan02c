@@ -60,6 +60,20 @@
             margin-bottom: 20px;
             opacity: 0.5;
         }
+        /* Style tambahan untuk kolom peserta */
+        .peserta-badge {
+            background-color: #e7f5ff;
+            color: #0d6efd;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .btn-peserta {
+            transition: all 0.3s;
+        }
+        .btn-peserta:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -108,10 +122,11 @@
                     <thead class="table-light">
                         <tr>
                             <th width="5%">#</th>
-                            <th width="15%">Kode MK</th>
-                            <th width="35%">Nama Mata Kuliah</th>
-                            <th width="15%">SKS</th>
-                            <th width="15%">Semester</th>
+                            <th width="12%">Kode MK</th>
+                            <th width="28%">Nama Mata Kuliah</th>
+                            <th width="10%">SKS</th>
+                            <th width="10%">Semester</th>
+                            <th width="15%">Peserta</th>  <!-- KOLOM BARU DITAMBAHKAN -->
                             <th width="15%" class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -134,12 +149,28 @@
 
                                 </span>
                             </td>
+                            
+                            <!-- KOLOM PESERTA BARU -->
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary me-2">
+                                        <i class="bi bi-people me-1"></i>
+                                        <?php echo e($mk->transkrips_count ?? 0); ?> Mahasiswa
+                                    </span>
+                                    <a href="<?php echo e(route('matakuliah.peserta', $mk->kode_mk)); ?>" 
+                                       class="btn btn-sm btn-outline-info btn-peserta" 
+                                       title="Lihat Daftar Peserta">
+                                        <i class="bi bi-eye"></i> Detail
+                                    </a>
+                                </div>
+                            </td>
+                            
                             <td class="text-center">
                                 <div class="action-buttons">
                                     <!-- Detail -->
                                     <a href="<?php echo e(route('matakuliah.show', $mk->kode_mk)); ?>" 
                                        class="btn btn-info btn-action" 
-                                       title="Detail">
+                                       title="Detail Mata Kuliah">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     
@@ -168,7 +199,7 @@
                         </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
-                            <td colspan="6" class="empty-state">
+                            <td colspan="7" class="empty-state">  <!-- COLSPAN DIUBAH MENJADI 7 -->
                                 <i class="bi bi-journal-x"></i>
                                 <h4 class="mt-3">Belum Ada Data</h4>
                                 <p class="mb-4">Mulai dengan menambahkan mata kuliah pertama Anda.</p>

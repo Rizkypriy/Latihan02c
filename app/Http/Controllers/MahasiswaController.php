@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
+use App\Models\Transkrip;
+use App\Models\MataKuliah;
 use Illuminate\Http\Request;
-
 
 class MahasiswaController extends Controller
 {
@@ -15,7 +16,6 @@ class MahasiswaController extends Controller
     {
         $mahasiswas = Mahasiswa::all();
         return view('mahasiswa.index', compact('mahasiswas'));
-
     }
 
     /**
@@ -23,7 +23,10 @@ class MahasiswaController extends Controller
      */
     public function create()
     {
-         return view('mahasiswa.create');
+        // AMBIL DATA MATA KULIAH
+        $matakuliahs = MataKuliah::all();
+        
+        return view('mahasiswa.create', compact('matakuliahs'));
     }
 
     /**
@@ -31,23 +34,28 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data
-        $request->validate([
+        $validated = $request->validate([
             'nim' => 'required|string|max:15|unique:mahasiswas,nim',
             'nama' => 'required|string|max:100',
             'kelas' => 'required|string|max:20',
-            'matakuliah' => 'required|string|max:50'
+            'kode_mk' => 'required|exists:matakuliahs,kode_mk',
+            'semester_ambil' => 'required|integer|min:1|max:14'
         ]);
 
-        // Simpan data
-        Mahasiswa::create([
+        $mahasiswa = Mahasiswa::create([
             'nim' => $request->nim,
             'nama' => $request->nama,
             'kelas' => $request->kelas,
-            'matakuliah' => $request->matakuliah
         ]);
 
-        // Redirect dengan pesan sukses
+        Transkrip::create([
+            'nim' => $request->nim,
+            'kode_mk' => $request->kode_mk,
+            'semester_ambil' => $request->semester_ambil,
+            'nilai' => null,
+            'grade' => null
+        ]);
+
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil ditambahkan!');
     }
@@ -55,8 +63,11 @@ class MahasiswaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Mahasiswa $mahasiswa)
+    public function show($nim)
     {
+        $mahasiswa = Mahasiswa::with('transkrips.mataKuliah')
+                              ->where('nim', $nim)
+                              ->firstOrFail();
         return view('mahasiswa.show', compact('mahasiswa'));
     }
 
@@ -66,7 +77,10 @@ class MahasiswaController extends Controller
     public function edit($nim)
     {
         $mahasiswa = Mahasiswa::where('nim', $nim)->firstOrFail();
-        return view('mahasiswa.edit', compact('mahasiswa'));
+        $matakuliahs = MataKuliah::all();
+        $transkrip = Transkrip::where('nim', $nim)->first();
+        
+        return view('mahasiswa.edit', compact('mahasiswa', 'matakuliahs', 'transkrip'));
     }
 
     /**
@@ -74,26 +88,28 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, $nim)
     {
-        // Validasi data
         $request->validate([
             'nim' => 'required|string|max:15|unique:mahasiswas,nim,' . $nim . ',nim',
             'nama' => 'required|string|max:100',
             'kelas' => 'required|string|max:20',
-            'matakuliah' => 'required|string|max:50'
+            'kode_mk' => 'required|exists:matakuliahs,kode_mk',
+            'semester_ambil' => 'required|integer|min:1|max:14'
         ]);
 
-        // Cari data berdasarkan NIM
         $mahasiswa = Mahasiswa::where('nim', $nim)->firstOrFail();
-        
-        // Update data
         $mahasiswa->update([
-            'nim' => $request->nim,
             'nama' => $request->nama,
             'kelas' => $request->kelas,
-            'matakuliah' => $request->matakuliah
         ]);
 
-        // Redirect dengan pesan sukses
+        Transkrip::updateOrCreate(
+            ['nim' => $nim],
+            [
+                'kode_mk' => $request->kode_mk,
+                'semester_ambil' => $request->semester_ambil
+            ]
+        );
+
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil diperbarui!');
     }
@@ -103,13 +119,9 @@ class MahasiswaController extends Controller
      */
     public function destroy($nim)
     {
-        // Cari data berdasarkan NIM
         $mahasiswa = Mahasiswa::where('nim', $nim)->firstOrFail();
-        
-        // Hapus data
         $mahasiswa->delete();
 
-        // Redirect dengan pesan sukses
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil dihapus!');
     }

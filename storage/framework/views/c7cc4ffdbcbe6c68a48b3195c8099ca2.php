@@ -3,19 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Mata Kuliah - {{ $matakuliah->nama_mk }}</title>
-    
+    <title>Detail Mata Kuliah - <?php echo e($matakuliah->nama_mk); ?></title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
     <style>
         body {
             background-color: #f8f9fa;
             padding-top: 40px;
         }
-        
         .detail-card {
             max-width: 700px;
             margin: 0 auto;
@@ -24,18 +21,15 @@
             box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
             overflow: hidden;
         }
-        
         .detail-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             padding: 30px;
             text-align: center;
         }
-        
         .detail-body {
             padding: 30px;
         }
-        
         .info-box {
             background: #f8f9fa;
             border-radius: 10px;
@@ -43,7 +37,6 @@
             margin-bottom: 20px;
             border-left: 4px solid #4facfe;
         }
-        
         .info-label {
             font-weight: 600;
             color: #495057;
@@ -52,34 +45,18 @@
             letter-spacing: 0.5px;
             margin-bottom: 5px;
         }
-        
         .info-value {
             font-size: 1.2rem;
             color: #333;
             margin-bottom: 15px;
         }
-        
         .badge-detail {
             font-size: 0.9rem;
             padding: 8px 15px;
             border-radius: 20px;
         }
-        
-        .btn-peserta {
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
     </style>
 </head>
-
 <body>
     <div class="container">
         <!-- Detail Card -->
@@ -89,17 +66,10 @@
                 <div class="mb-3">
                     <i class="bi bi-book" style="font-size: 3rem;"></i>
                 </div>
-                <h1 class="h3 mb-2">{{ $matakuliah->nama_mk }}</h1>
+                <h1 class="h3 mb-2"><?php echo e($matakuliah->nama_mk); ?></h1>
                 <p class="mb-0 opacity-75">
-                    <code>{{ $matakuliah->kode_mk }}</code>
+                    <code><?php echo e($matakuliah->kode_mk); ?></code>
                 </p>
-            </div>
-
-            <!-- Tombol Lihat Peserta -->
-            <div class="btn-peserta">
-                <a href="{{ route('matakuliah.peserta', $matakuliah->kode_mk) }}" class="btn btn-info">
-                    <i class="bi bi-people me-1"></i> Lihat Daftar Peserta
-                </a>
             </div>
 
             <!-- Body -->
@@ -110,11 +80,12 @@
                     <div class="col-md-6 mb-4">
                         <div class="info-box">
                             <div class="info-label">
-                                <i class="bi bi-key me-1"></i> Kode Mata Kuliah
+                                <i class="bi bi-key me-1"></i>Kode Mata Kuliah
                             </div>
                             <div class="info-value">
                                 <span class="badge bg-primary badge-detail">
-                                    {{ $matakuliah->kode_mk }}
+                                    <?php echo e($matakuliah->kode_mk); ?>
+
                                 </span>
                             </div>
                         </div>
@@ -124,11 +95,12 @@
                     <div class="col-md-6 mb-4">
                         <div class="info-box">
                             <div class="info-label">
-                                <i class="bi bi-calendar-week me-1"></i> Semester
+                                <i class="bi bi-calendar-week me-1"></i>Semester
                             </div>
                             <div class="info-value">
                                 <span class="badge bg-success badge-detail">
-                                    Semester {{ $matakuliah->semester }}
+                                    Semester <?php echo e($matakuliah->semester); ?>
+
                                 </span>
                             </div>
                         </div>
@@ -138,10 +110,11 @@
                     <div class="col-12 mb-4">
                         <div class="info-box">
                             <div class="info-label">
-                                <i class="bi bi-journal-text me-1"></i> Nama Mata Kuliah
+                                <i class="bi bi-journal-text me-1"></i>Nama Mata Kuliah
                             </div>
                             <div class="info-value">
-                                {{ $matakuliah->nama_mk }}
+                                <?php echo e($matakuliah->nama_mk); ?>
+
                             </div>
                         </div>
                     </div>
@@ -150,14 +123,14 @@
                     <div class="col-12 mb-4">
                         <div class="info-box">
                             <div class="info-label">
-                                <i class="bi bi-clock me-1"></i> SKS (Satuan Kredit Semester)
+                                <i class="bi bi-clock me-1"></i>SKS (Satuan Kredit Semester)
                             </div>
                             <div class="info-value">
                                 <span class="badge bg-info badge-detail">
-                                    <i class="bi bi-clock me-1"></i> {{ $matakuliah->sks }} SKS
+                                    <i class="bi bi-clock me-1"></i><?php echo e($matakuliah->sks); ?> SKS
                                 </span>
                                 <small class="text-muted ms-2">
-                                    ({{ $matakuliah->sks * 50 }} menit per minggu)
+                                    (<?php echo e($matakuliah->sks * 50); ?> menit per minggu)
                                 </small>
                             </div>
                         </div>
@@ -171,31 +144,33 @@
                             <small class="text-muted">
                                 <i class="bi bi-calendar-plus me-1"></i>
                                 <strong>Dibuat:</strong><br>
-                                {{ $matakuliah->created_at->format('d F Y, H:i') }}
+                                <?php echo e($matakuliah->created_at->format('d F Y, H:i')); ?>
+
                             </small>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted">
                                 <i class="bi bi-calendar-check me-1"></i>
                                 <strong>Diupdate:</strong><br>
-                                {{ $matakuliah->updated_at->format('d F Y, H:i') }}
+                                <?php echo e($matakuliah->updated_at->format('d F Y, H:i')); ?>
+
                             </small>
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <a href="{{ route('matakuliah.index') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i> Kembali
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <a href="<?php echo e(route('matakuliah.index')); ?>" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali
                     </a>
-                    <a href="{{ route('matakuliah.edit', $matakuliah->kode_mk) }}" class="btn btn-warning">
-                        <i class="bi bi-pencil-square me-1"></i> Edit
+                    <a href="<?php echo e(route('matakuliah.edit', $matakuliah->kode_mk)); ?>" class="btn btn-warning">
+                        <i class="bi bi-pencil-square me-1"></i>Edit
                     </a>
                     
                     <!-- Delete Button with Modal Trigger -->
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="bi bi-trash me-1"></i> Hapus
+                        <i class="bi bi-trash me-1"></i>Hapus
                     </button>
                 </div>
             </div>
@@ -216,26 +191,26 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">
-                        <i class="bi bi-exclamation-triangle me-2"></i> Konfirmasi Hapus
+                        <i class="bi bi-exclamation-triangle me-2"></i>Konfirmasi Hapus
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Apakah Anda yakin ingin menghapus mata kuliah ini?</p>
                     <div class="alert alert-warning">
-                        <strong>{{ $matakuliah->kode_mk }} - {{ $matakuliah->nama_mk }}</strong><br>
+                        <strong><?php echo e($matakuliah->kode_mk); ?> - <?php echo e($matakuliah->nama_mk); ?></strong><br>
                         <small>Data yang dihapus tidak dapat dikembalikan!</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i> Batal
+                        <i class="bi bi-x-circle me-1"></i>Batal
                     </button>
-                    <form action="{{ route('matakuliah.destroy', $matakuliah->kode_mk) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
+                    <form action="<?php echo e(route('matakuliah.destroy', $matakuliah->kode_mk)); ?>" method="POST">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash me-1"></i> Ya, Hapus
+                            <i class="bi bi-trash me-1"></i>Ya, Hapus
                         </button>
                     </form>
                 </div>
@@ -247,21 +222,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Print functionality with Ctrl+P
+        // Print functionality
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'p') {
                 e.preventDefault();
                 window.print();
             }
         });
-        
-        // Auto-hide alerts after 5 seconds (if any alerts exist)
-        setTimeout(() => {
-            document.querySelectorAll('.alert').forEach(alert => {
-                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-                bsAlert.close();
-            });
-        }, 5000);
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\Latihan02c\resources\views/matakuliah/show.blade.php ENDPATH**/ ?>

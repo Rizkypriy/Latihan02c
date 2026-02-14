@@ -15,7 +15,7 @@ class Mahasiswa extends Model
         'nim',
         'nama',
         'kelas',
-        'matakuliah'
+        // 'matakuliah'
     ];
 
     // Jika NIM bukan auto-increment
@@ -35,6 +35,15 @@ class Mahasiswa extends Model
             'nim',                   // Foreign key di pivot untuk Mahasiswa
             'kode_mk'                // Foreign key di pivot untuk MataKuliah
         );
+    }
+
+    
+    /**
+     * Relasi ke Transkrip
+     */
+    public function transkrips()
+    {
+        return $this->hasMany(Transkrip::class, 'nim', 'nim');
     }
 }
 
